@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "900863701469",
+    "project_id": "monex-6b019",
+    "storage_bucket": "monex-6b019.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:900863701469:android:e9185a6b0119b561eec634",
+        "android_client_info": {
+          "package_name": "com.example.monex"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "900863701469-svqsns45tv8tamvgcr1j384kl2ehpg2r.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.monex",
+            "certificate_hash": "4343c3080f7792c84efc347257e0b559c3b7d779"
+          }
+        },
+        {
+          "client_id": "900863701469-nhnc5f8if5lnh23mv8iicl13j6pdr7om.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB3uhZrmvbISmQAtZjGFeGdonIvDtteci8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "900863701469-nhnc5f8if5lnh23mv8iicl13j6pdr7om.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "900863701469-m12muvqfkgnq7ig0383q65ullf2dnfjn.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.monex"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

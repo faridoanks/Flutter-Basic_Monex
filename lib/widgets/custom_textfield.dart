@@ -36,9 +36,13 @@ class _CustomTextfieldState extends ConsumerState<CustomTextfield> {
   @override
   Widget build(BuildContext context) {
     final isVisible = ref.watch(isVisibleProvider);
-    return Center(
+    return SizedBox(
+      width: double.infinity,
       child: Container(
         child: TextField(
+      
+          
+          
           controller: widget.control,
           focusNode: widget.focus,
           style: GoogleFonts.inter(
@@ -48,6 +52,7 @@ class _CustomTextfieldState extends ConsumerState<CustomTextfield> {
           ),
           inputFormatters: widget.inputFormatters,
           decoration: InputDecoration(
+            
             hintText: widget.hint,
             hintStyle: GoogleFonts.inter(
               fontSize: 16,
@@ -81,10 +86,12 @@ class _CustomTextfieldState extends ConsumerState<CustomTextfield> {
                     },
                   )
                 : null,
-            fillColor: AppColors.neutralsGrey3,
+            fillColor: AppColors.neutralsWhite,
+            filled: true
           ),
           onChanged: widget.onChanged,
           obscureText: widget.isPassword == true ? !isVisible : false,
+          textAlign: TextAlign.start,
         ),
       ),
     );

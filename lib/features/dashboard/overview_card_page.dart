@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -6,11 +5,13 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:monex/core/theme/app_colors.dart';
 import 'package:monex/features/dashboard/dashboard_provider.dart';
 import 'package:monex/features/transactions/transaction_helper.dart';
-import 'package:riverpod/riverpod.dart';
+import 'package:monex/widgets/custom_table_calendar.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:fl_chart/fl_chart.dart';
+import 'dart:math';
 
 class OverviewCardPage extends ConsumerStatefulWidget {
-  String type;
+  final String type;
   OverviewCardPage({super.key, required this.type});
 
   @override
@@ -25,6 +26,14 @@ class _OverviewCardPageState extends ConsumerState<OverviewCardPage> {
 
   String selectedDayFormat = '7 days';
   CalendarFormat _calendarFormat = CalendarFormat.week;
+  String _activeTab = 'spends';
+
+  late String _currentType;
+
+  void initState() {
+    super.initState();
+    _currentType = widget.type;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,20 +46,24 @@ class _OverviewCardPageState extends ConsumerState<OverviewCardPage> {
       return isSameDay(transaction.createdAt, selectedDay);
     }).toList();
 
+    final currentTransactions = selectedTransactions.where((transaction) {
+      return transaction.type == _currentType.toLowerCase();
+    }).toList();
+
     int total = 0;
     String description = "";
 
-    if (widget.type == 'Income') {
+    if (_currentType == 'Income') {
       total = selectedTransactions
           .where((transaction) => transaction.type == 'income')
           .fold(0, (sum, transaction) => sum + transaction.amount);
       description = "Your total income for the selected period.";
-    } else if (widget.type == 'Expense') {
+    } else if (_currentType == 'Expense') {
       total = selectedTransactions
           .where((transaction) => transaction.type == 'expense')
           .fold(0, (sum, transaction) => sum + transaction.amount);
       description = "Your total expenses for the selected period.";
-    } else if (widget.type == 'Balance') {
+    } else if (_currentType == 'Balance') {
       final income = selectedTransactions
           .where((transaction) => transaction.type == 'income')
           .fold(0, (sum, transaction) => sum + transaction.amount);
@@ -62,6 +75,38 @@ class _OverviewCardPageState extends ConsumerState<OverviewCardPage> {
           .fold(0, (sum, transaction) => sum + transaction.amount);
 
       total = income - expense;
+    }
+
+    final totalChartAmount = currentTransactions.fold<int>(
+      0,
+      (sum, transaction) => sum + transaction.amount,
+    );
+
+    final random = Random();
+
+    final chartColors = List.generate(
+      currentTransactions.length,
+      (_) => Colors.primaries[random.nextInt(Colors.primaries.length)],
+    );
+    final pieSections = currentTransactions.asMap().entries.map((entry) {
+      final index = entry.key;
+      final transaction = entry.value;
+
+      return PieChartSectionData(
+        value: transaction.amount.toDouble(),
+        color: chartColors[index],
+        showTitle: false,
+      );
+    }).toList();
+
+    if (totalChartAmount > 0) {
+      pieSections.add(
+        PieChartSectionData(
+          value: totalChartAmount.toDouble(),
+          color: Colors.transparent,
+          showTitle: false,
+        ),
+      );
     }
 
     return Scaffold(
@@ -80,7 +125,7 @@ class _OverviewCardPageState extends ConsumerState<OverviewCardPage> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              "Total ${widget.type}",
+              "Total ${_currentType}",
               style: GoogleFonts.inter(
                 color: AppColors.neutralsDark1,
                 fontSize: 18,
@@ -96,7 +141,7 @@ class _OverviewCardPageState extends ConsumerState<OverviewCardPage> {
               ),
               onSelected: (value) {
                 setState(() {
-                  widget.type = value;
+                  _currentType = value;
                 });
               },
               itemBuilder: (context) {
@@ -109,175 +154,326 @@ class _OverviewCardPageState extends ConsumerState<OverviewCardPage> {
           ],
         ),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 24, right: 24, top: 32),
-              child: Column(
-                children: [
-                  Container(
+      body: CustomScrollView(
+        slivers: [
+          // 1. ELEMEN ATAS: Kalender, Lingkaran Total, dan Deskripsi (Statis)
+          SliverToBoxAdapter(
+            child: Column(
+              children: [
+                // Kalender sesuai format awal
+                Padding(
+                  padding: const EdgeInsets.only(left: 24, right: 24, top: 32),
+                  child: Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20),
                       color: AppColors.neutralsWhite,
                     ),
-
-                    child: TableCalendar(
+                    child: CustomTableCalendar(
                       focusedDay: focusedDay,
                       firstDay: firstDay,
                       lastDay: lastDay,
                       calendarFormat: _calendarFormat,
+                      selectedDay: selectedDay,
+                    ),
+                  ),
+                ),
 
-                      selectedDayPredicate: (day) {
-                        return isSameDay(selectedDay, day);
-                      },
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _calendarFormat = _calendarFormat == CalendarFormat.week
+                          ? CalendarFormat.month
+                          : CalendarFormat.week;
+                    });
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Icon(
+                      _calendarFormat == CalendarFormat.week
+                          ? Icons.keyboard_arrow_down
+                          : Icons.keyboard_arrow_up,
+                      color: AppColors.neutralsDark1,
+                      size: 28,
+                    ),
+                  ),
+                ),
 
-                      onDaySelected: (selectedDay, focusedDay) {
-                        setState(() {
-                          this.selectedDay = selectedDay;
-                          this.focusedDay = focusedDay;
-                        });
-                      },
+                const SizedBox(height: 16),
 
-                      headerStyle: HeaderStyle(
-                        titleTextStyle: TextStyle(
-                          color: AppColors.neutralsDark1,
-                          fontSize: 16,
+                // Lingkaran Biru Besar Total Saldo/Pengeluaran sesuai Desain
+                Container(
+                  width: 150,
+                  height: 150,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: const Color(
+                      0xff1d4ed8,
+                    ), // Warna biru solid sesuai desain gambar
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0xff1d4ed8).withOpacity(0.15),
+                        blurRadius: 30,
+                        spreadRadius: 8,
+                      ),
+                    ],
+                  ),
+                  alignment: Alignment.center,
+                  child: Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        "Rp $total",
+                        style: GoogleFonts.inter(
+                          color: Colors.white,
+                          fontSize: 26,
                           fontWeight: FontWeight.w600,
                         ),
-                        formatButtonTextStyle: TextStyle(
-                          color: AppColors.neutralsDark1,
-                        ),
-                        formatButtonDecoration: BoxDecoration(
-                          border: Border.all(color: AppColors.neutralsDark1),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        leftChevronIcon: Icon(
-                          Icons.chevron_left,
-                          color: AppColors.neutralsDark1,
-                        ),
-                        rightChevronIcon: Icon(
-                          Icons.chevron_right,
-                          color: AppColors.neutralsDark1,
-                        ),
-                        formatButtonVisible: false,
                       ),
+                    ),
+                  ),
+                ),
 
-                      calendarStyle: CalendarStyle(
-                        defaultTextStyle: TextStyle(
-                          color: AppColors.neutralsDark1,
-                        ),
-                        weekendTextStyle: TextStyle(
-                          color: AppColors.neutralsDark1,
-                        ),
-                        outsideTextStyle: TextStyle(
-                          color: AppColors.neutralsGrey2,
-                        ),
-                        todayTextStyle: TextStyle(
-                          color: AppColors.neutralsWhite,
-                        ),
-                        selectedTextStyle: TextStyle(
-                          color: AppColors.neutralsWhite,
-                        ),
-                      ),
+                const SizedBox(height: 24),
 
-                      daysOfWeekStyle: DaysOfWeekStyle(
-                        weekdayStyle: TextStyle(color: AppColors.neutralsDark1),
-                        weekendStyle: TextStyle(color: AppColors.neutralsDark1),
+                // Teks Informasi Deskripsi Dinamis di Bawah Lingkaran
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 40.0),
+                  child: Text(
+                    description,
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.inter(
+                      color: AppColors.neutralsDark1.withOpacity(0.7),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      height: 1.4,
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 32),
+
+                // Komponen Tab Bar (Spends | Categories) Sesuai Gambar Desain
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              _activeTab = 'spends';
+                            });
+                          },
+                          child: Column(
+                            children: [
+                              Text(
+                                "Spends",
+                                style: GoogleFonts.inter(
+                                  fontWeight: FontWeight.w600,
+                                  color: _activeTab == 'spends'
+                                      ? AppColors.primaryBrand
+                                      : AppColors.neutralsGrey2,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Container(
+                                height: 3,
+                                color: _activeTab == 'spends'
+                                    ? AppColors.primaryBrand
+                                    : Colors.transparent,
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
-                      onFormatChanged: (value) {
-                        setState(() {
-                          _calendarFormat =
-                              _calendarFormat == CalendarFormat.week
-                              ? CalendarFormat.month
-                              : CalendarFormat.week;
-                        });
-                      },
-                      availableCalendarFormats: const {
-                        CalendarFormat.week: '7 days',
-                        CalendarFormat.month: '1 month',
-                      },
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              _activeTab = 'categories';
+                            });
+                          },
+                          child: Column(
+                            children: [
+                              Text(
+                                "Categories",
+                                style: GoogleFonts.inter(
+                                  fontWeight: FontWeight.w500,
+                                  color: _activeTab == 'categories'
+                                      ? AppColors.primaryBrand
+                                      : AppColors.neutralsGrey2,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Container(
+                                height: 3,
+                                color: _activeTab == 'categories'
+                                    ? AppColors.primaryBrand
+                                    : Colors.transparent,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                if (_activeTab == 'categories')
+                  SizedBox(
+                    height: 180,
+                    child: PieChart(
+                      //yehhh
+                      PieChartData(
+                        sections: pieSections,
+                        startDegreeOffset: 180,
+                        centerSpaceRadius: 50,
+                      ),
                     ),
                   ),
 
-                  GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        _calendarFormat = _calendarFormat == CalendarFormat.week
-                            ? CalendarFormat.month
-                            : CalendarFormat.week;
-                      });
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                if (_activeTab == 'categories')
+                  Wrap(
+                    alignment: WrapAlignment.center,
+                    spacing: 16,
+                    runSpacing: 8,
+                    children: currentTransactions.asMap().entries.map((entry) {
+                      final index = entry.key;
+                      final transaction = entry.value;
+
+                      return Row(
+                        mainAxisSize: MainAxisSize.min,
                         children: [
+                          Container(
+                            width: 8,
+                            height: 8,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: chartColors[index],
+                            ),
+                          ),
+                          const SizedBox(width: 5),
                           Text(
-                            _calendarFormat == CalendarFormat.week
-                                ? 'Tampilkan selengkapnya'
-                                : 'Tampilkan lebih sedikit',
+                            transaction.category,
                             style: GoogleFonts.inter(
+                              fontSize: 11,
                               color: AppColors.neutralsDark1,
                             ),
                           ),
-                          Icon(
-                            _calendarFormat == CalendarFormat.week
-                                ? Icons.keyboard_arrow_down
-                                : Icons.keyboard_arrow_up,
-                            color: AppColors.neutralsDark1,
-                          ),
                         ],
-                      ),
-                    ),
+                      );
+                    }).toList(),
                   ),
-                  SizedBox(height: 24),
-                  Container(
-                    width: 108,
-                    height: 108,
-                    decoration: BoxDecoration(
-                      gradient: AppColors.gradient00,
-                      shape: BoxShape.circle,
-                    ),
+
+                const SizedBox(height: 16),
+              ],
+            ),
+          ),
+
+          // 2. DAFTAR LIST: Menggunakan SliverList agar Pemuatan Malas (Lazy Load) Berjalan Mulus Bebas Lag
+          selectedTransactions.isEmpty
+              ? SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 40.0),
                     child: Center(
                       child: Text(
-                        "Rp ${total}",
+                        "No transactions available",
                         style: GoogleFonts.inter(
-                          color: AppColors.neutralsWhite,
-                          fontWeight: FontWeight.w500,
-                          fontSize: 24,
+                          color: AppColors.neutralsGrey2,
                         ),
                       ),
                     ),
                   ),
-                  SizedBox(height: 24),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      "$description",
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.inter(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.neutralsDark1,
-                      ),
-                    ),
+                )
+              : SliverPadding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 8,
                   ),
-                  SizedBox(height: 24),
-                ],
-              ),
-            ),
-            Container(
-              width: double.infinity,
-              height: 300,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16),
-                color: AppColors.neutralsWhite,
-              ),
-              child: Column(children: [SingleChildScrollView()]),
-            ),
-          ],
-        ),
+                  sliver: SliverList(
+                    delegate: SliverChildBuilderDelegate((context, index) {
+                      final transaction = selectedTransactions[index];
+
+                      return Container(
+                        margin: const EdgeInsets.symmetric(vertical: 8),
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: AppColors.neutralsWhite,
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 46,
+                              height: 46,
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color: AppColors.neutralsSoftGrey2,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Text(
+                                "${typeOptions}",
+                              ), // Menggunakan widget ikon asli bawaan dari variable category di atas
+                            ),
+                            const SizedBox(width: 16),
+
+                            // Judul Transaksi dan Tanggal
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    transaction.title ?? "Transaction",
+                                    style: GoogleFonts.inter(
+                                      fontWeight: FontWeight.w600,
+                                      color: AppColors.neutralsDark1,
+                                      fontSize: 15,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    "${transaction.createdAt.day}/${transaction.createdAt.month}/${transaction.createdAt.year}",
+                                    style: GoogleFonts.inter(
+                                      color: AppColors.neutralsGrey2,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  "${transaction.type == 'income' ? '+' : '-'} Rp ${transaction.amount}",
+                                  style: GoogleFonts.inter(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 15,
+                                    color: transaction.type == 'income'
+                                        ? const Color(0xff16a34a)
+                                        : AppColors.neutralsDark1,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  transaction.type == 'income'
+                                      ? 'Income'
+                                      : 'Expense',
+                                  style: GoogleFonts.inter(
+                                    color: AppColors.neutralsGrey2,
+                                    fontSize: 11,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      );
+                    }, childCount: selectedTransactions.length),
+                  ),
+                ),
+        ],
       ),
     );
   }

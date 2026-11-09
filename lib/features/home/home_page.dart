@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:monex/core/theme/app_colors.dart';
 import 'package:go_router/go_router.dart';
+import 'package:monex/core/routes/app_router.dart';
 
 class HomePage extends ConsumerWidget {
   final StatefulNavigationShell navigationShell;
@@ -13,14 +14,19 @@ class HomePage extends ConsumerWidget {
     int currentIndex = navigationShell.currentIndex;
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: Container(
-        width: 52,
-        height: 52,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          gradient: AppColors.gradient02,
+      floatingActionButton: GestureDetector(
+        onTap: () {
+          context.go('/addgoals');
+        },
+        child: Container(
+          width: 52,
+          height: 52,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            gradient: AppColors.gradient02,
+          ),
+          child: Icon(Icons.add, color: AppColors.neutralsWhite),
         ),
-        child: Icon(Icons.add, color: Colors.white),
       ),
       body: navigationShell,
 

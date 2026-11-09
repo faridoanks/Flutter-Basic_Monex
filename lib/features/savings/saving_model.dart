@@ -7,8 +7,8 @@ class SavingModel {
   int currentAmount;
   int targetAmount;
   DateTime createdAt;
-  DateTime deadline;
-  Widget icon;
+  DateTime? deadline;
+  String? icon;
   bool isCompleted;
 
   SavingModel({
@@ -18,7 +18,7 @@ class SavingModel {
     required this.targetAmount,
     required this.createdAt,
     required this.deadline,
-    required this.icon,
+    this.icon,
     required this.isCompleted,
   });
 

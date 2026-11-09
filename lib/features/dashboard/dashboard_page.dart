@@ -21,6 +21,7 @@ class DashboardPage extends ConsumerStatefulWidget {
 }
 
 class _DashboardPageState extends ConsumerState<DashboardPage> {
+  bool isAddMode = false;
   @override
   void initState() {
     super.initState();
@@ -126,32 +127,55 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     SizedBox(height: 32),
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          SmallFeatureCard(
-                            title: 'Savings',
-                            icon: Icons.savings_outlined,
-                            onTapped: () {
-                              
-                            },
+                    AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 350),
+
+                      child: isAddMode
+                          ? Row(
+                              key: const ValueKey('add'),
+                              children: [
+                                Expanded(
+                                  child: SmallFeatureCard(
+                                    title: 'Add Income',
+                                    icon: Icons.add_circle_outline,
+                                    onTapped: () {},
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: SmallFeatureCard(
+                                    title: 'Add Expense',
+                                    icon: Icons.remove_circle_outline,
+                                    onTapped: () {},
+                                  ),
+                                ),
+                              ],
+                            )
+                          : SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                            child: Row(
+                                key: const ValueKey('normal'),
+                                children: [
+                                  SmallFeatureCard(
+                                    title: 'Add',
+                                    icon: Icons.add,
+                                    onTapped: () {},
+                                  ),
+                                  const SizedBox(width: 12),
+                                  SmallFeatureCard(
+                                    title: 'Reminders',
+                                    icon: Icons.notifications_none,
+                                    onTapped: () {},
+                                  ),
+                                  const SizedBox(width: 12),
+                                  SmallFeatureCard(
+                                    title: 'Budget',
+                                    icon: Icons.bar_chart_outlined,
+                                    onTapped: () {},
+                                  ),
+                                ],
+                              ),
                           ),
-                          const SizedBox(width: 12),
-                          SmallFeatureCard(
-                            title: 'Reminders',
-                            icon: Icons.notifications_none,
-                            onTapped: () {},
-                          ),
-                          const SizedBox(width: 12),
-                          SmallFeatureCard(
-                            title: 'Budget',
-                            icon: Icons.bar_chart_outlined,
-                            onTapped: () {},
-                          ),
-                        ],
-                      ),
                     ),
                     SizedBox(height: 40),
                     Row(

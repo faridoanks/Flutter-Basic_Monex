@@ -16,6 +16,7 @@ import 'package:monex/features/profile/setting_page.dart';
 
 import 'package:monex/features/reminders/add_reminders_page.dart';
 import 'package:monex/features/reminders/reminders_page.dart';
+import 'package:monex/features/savings/add_goals_page.dart';
 
 import 'package:monex/features/savings/add_savings_page.dart';
 import 'package:monex/features/savings/savings_page.dart';
@@ -24,16 +25,17 @@ import 'package:monex/features/notifications/notifications_page.dart';
 import 'package:monex/features/home/home_page.dart';
 import 'package:monex/features/noConnection/no_connection_page.dart';
 
+
+final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>(
+  debugLabel: 'root',
+);
+
 final GoRouter router = GoRouter(
   initialLocation: '/',
+  navigatorKey: rootNavigatorKey,
 
   routes: <RouteBase>[
-
-
-    GoRoute(
-      path: '/',
-      builder: (context, state) => IntroductionPage(),
-    ),
+    GoRoute(path: '/', builder: (context, state) => IntroductionPage()),
 
     GoRoute(
       path: '/no_connection',
@@ -46,18 +48,15 @@ final GoRouter router = GoRouter(
         return CustomTransitionPage(
           transitionDuration: const Duration(milliseconds: 500),
           child: OnBoardingPage(),
-          transitionsBuilder:
-              (context, animation, secondaryAnimation, child) {
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
             return SlideTransition(
-              position: Tween<Offset>(
-                begin: const Offset(1.0, 0.0),
-                end: Offset.zero,
-              ).animate(
-                CurvedAnimation(
-                  parent: animation,
-                  curve: Curves.easeInOut,
-                ),
-              ),
+              position:
+                  Tween<Offset>(
+                    begin: const Offset(1.0, 0.0),
+                    end: Offset.zero,
+                  ).animate(
+                    CurvedAnimation(parent: animation, curve: Curves.easeInOut),
+                  ),
               child: child,
             );
           },
@@ -65,10 +64,7 @@ final GoRouter router = GoRouter(
       },
     ),
 
-    GoRoute(
-      path: '/register',
-      builder: (context, state) => RegisterPage(),
-    ),
+    GoRoute(path: '/register', builder: (context, state) => RegisterPage()),
 
     GoRoute(
       path: '/login',
@@ -76,18 +72,15 @@ final GoRouter router = GoRouter(
         return CustomTransitionPage(
           transitionDuration: const Duration(milliseconds: 200),
           child: LoginPage(),
-          transitionsBuilder:
-              (context, animation, secondaryAnimation, child) {
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
             return SlideTransition(
-              position: Tween<Offset>(
-                begin: const Offset(1.0, 0.0),
-                end: Offset.zero,
-              ).animate(
-                CurvedAnimation(
-                  parent: animation,
-                  curve: Curves.easeInOut,
-                ),
-              ),
+              position:
+                  Tween<Offset>(
+                    begin: const Offset(1.0, 0.0),
+                    end: Offset.zero,
+                  ).animate(
+                    CurvedAnimation(parent: animation, curve: Curves.easeInOut),
+                  ),
               child: child,
             );
           },
@@ -107,9 +100,7 @@ final GoRouter router = GoRouter(
 
         if (oobCode == null || oobCode.isEmpty) {
           return const Scaffold(
-            body: Center(
-              child: Text('Invalid reset password link.'),
-            ),
+            body: Center(child: Text('Invalid reset password link.')),
           );
         }
 
@@ -121,16 +112,12 @@ final GoRouter router = GoRouter(
       builder: (context, state) {
         final type = state.uri.queryParameters['type'] ?? "Balance";
         return OverviewCardPage(type: type);
-      }
+      },
     ),
-
-
 
     StatefulShellRoute.indexedStack(
       builder: (context, state, navigationShell) {
-        return HomePage(
-          navigationShell: navigationShell,
-        );
+        return HomePage(navigationShell: navigationShell);
       },
 
       branches: [
@@ -184,26 +171,16 @@ final GoRouter router = GoRouter(
       ],
     ),
 
-
-
     GoRoute(
       path: '/addreminders',
       builder: (context, state) => AddRemindersPage(),
     ),
 
-    GoRoute(
-      path: '/addsavings',
-      builder: (context, state) => AddSavingsPage(),
-    ),
+    GoRoute(path: '/addsavings', parentNavigatorKey: rootNavigatorKey, builder: (context, state) => AddSavingsPage()),
+    GoRoute(path: '/addgoals', builder: (context, state) => AddGoalsPage()),
 
-    GoRoute(
-      path: '/profile',
-      builder: (context, state) => ProfilePage(),
-    ),
+    GoRoute(path: '/profile', builder: (context, state) => ProfilePage()),
 
-    GoRoute(
-      path: '/settings',
-      builder: (context, state) => SettingPage(),
-    ),
+    GoRoute(path: '/settings', builder: (context, state) => SettingPage()),
   ],
 );

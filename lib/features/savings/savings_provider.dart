@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:monex/features/savings/saving_model.dart';
 import 'package:monex/features/savings/saving_repository.dart';
 
@@ -47,3 +48,15 @@ final loadSavingProvider = NotifierProvider<SavingProvider, List<SavingModel>>(
     return SavingProvider();
   },
 );
+
+final savingErrorProvider = StateProvider<bool>((ref) {
+  return false;
+});
+
+final savingErrorMessageProvider = StateProvider<String>((ref) {
+  return '';
+});
+
+final contributionTypeProvider = StateProvider<String>((ref) {
+  return "Yearly";
+});

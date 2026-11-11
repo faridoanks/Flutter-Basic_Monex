@@ -24,7 +24,8 @@ import 'package:monex/features/savings/savings_page.dart';
 import 'package:monex/features/notifications/notifications_page.dart';
 import 'package:monex/features/home/home_page.dart';
 import 'package:monex/features/noConnection/no_connection_page.dart';
-
+import 'package:monex/features/transactions/add_transaction_page.dart';
+import 'package:monex/widgets/custom_add_card.dart';
 
 final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>(
   debugLabel: 'root',
@@ -114,6 +115,13 @@ final GoRouter router = GoRouter(
         return OverviewCardPage(type: type);
       },
     ),
+    GoRoute(
+      path: '/custom-add-card',
+      builder: (context, state) {
+        final type = state.uri.queryParameters['type'] ?? "Transaction";
+        return AddTransactionPage(type: type);
+      },
+    ),
 
     StatefulShellRoute.indexedStack(
       builder: (context, state, navigationShell) {
@@ -176,7 +184,11 @@ final GoRouter router = GoRouter(
       builder: (context, state) => AddRemindersPage(),
     ),
 
-    GoRoute(path: '/addsavings', parentNavigatorKey: rootNavigatorKey, builder: (context, state) => AddSavingsPage()),
+    GoRoute(
+      path: '/addsavings',
+      parentNavigatorKey: rootNavigatorKey,
+      builder: (context, state) => AddSavingsPage(),
+    ),
     GoRoute(path: '/addgoals', builder: (context, state) => AddGoalsPage()),
 
     GoRoute(path: '/profile', builder: (context, state) => ProfilePage()),

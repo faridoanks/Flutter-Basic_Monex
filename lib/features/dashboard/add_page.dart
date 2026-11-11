@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:monex/core/theme/app_colors.dart';
+import 'package:monex/widgets/custom_add_card.dart';
 
 class AddPage extends StatefulWidget {
   const AddPage({super.key});
@@ -24,7 +25,7 @@ class _AddPageState extends State<AddPage> {
             fontWeight: FontWeight.w600,
           ),
         ),
-         backgroundColor: AppColors.neutralsWhite,
+        backgroundColor: AppColors.neutralsWhite,
         leading: IconButton(
           onPressed: () => context.go('/dashboard'),
           icon: const Icon(Icons.arrow_back, color: AppColors.neutralsDark1),
@@ -34,27 +35,31 @@ class _AddPageState extends State<AddPage> {
       body: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.only(left: 24, right: 24, top: 32, bottom: 32),
+            padding: const EdgeInsets.only(
+              left: 24,
+              right: 24,
+              top: 32,
+              bottom: 32,
+            ),
             child: Row(
               children: [
-                GestureDetector(
-                  onTap: (){
-                    
+                CustomAddCard(onTap: () {}, isAddIconButton: true),
+                SizedBox(width: 16),
+                CustomAddCard(
+                  onTap: () {
+                    context.go('/custom-add-card?type=income');
                   },
-                  child: Container(
-                    height: 88,
-                    width: 48,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(
-                        color: AppColors.neutralsSoftGrey3,
-                        width: 1,
-                      ),
-                    ),
-                  ),
+                  isAddIconButton: false,
+                  title: "Add Income",
                 ),
-                SizedBox(width: 16,),
-                Container
+                SizedBox(width: 16),
+                CustomAddCard(
+                  onTap: () {
+                    context.go('/custom-add-card?type=expense');
+                  },
+                  isAddIconButton: false,
+                  title: "Add Expense",
+                ),
               ],
             ),
           ),

@@ -13,6 +13,7 @@ class CustomTextfield extends ConsumerStatefulWidget {
   final FocusNode? focus;
   final bool? isPassword;
   final bool hasError;
+  final bool isOnlyNumber;
   final ValueChanged<String>? onChanged;
   final List<TextInputFormatter>? inputFormatters;
 
@@ -24,6 +25,7 @@ class CustomTextfield extends ConsumerStatefulWidget {
     required this.focus,
     required this.isPassword,
     required this.hasError,
+    required this.isOnlyNumber,
     this.onChanged,
     this.inputFormatters,
   });
@@ -40,9 +42,7 @@ class _CustomTextfieldState extends ConsumerState<CustomTextfield> {
       width: double.infinity,
       child: Container(
         child: TextField(
-      
-          
-          
+          keyboardType: widget.isOnlyNumber == true ? TextInputType.number : null,
           controller: widget.control,
           focusNode: widget.focus,
           style: GoogleFonts.inter(
@@ -52,7 +52,6 @@ class _CustomTextfieldState extends ConsumerState<CustomTextfield> {
           ),
           inputFormatters: widget.inputFormatters,
           decoration: InputDecoration(
-            
             hintText: widget.hint,
             hintStyle: GoogleFonts.inter(
               fontSize: 16,
@@ -87,7 +86,7 @@ class _CustomTextfieldState extends ConsumerState<CustomTextfield> {
                   )
                 : null,
             fillColor: AppColors.neutralsWhite,
-            filled: true
+            filled: true,
           ),
           onChanged: widget.onChanged,
           obscureText: widget.isPassword == true ? !isVisible : false,

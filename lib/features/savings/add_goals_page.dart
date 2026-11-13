@@ -8,7 +8,6 @@ import 'package:monex/features/savings/savings_provider.dart';
 import 'package:monex/widgets/custom_button.dart';
 import 'package:monex/widgets/custom_calendar_picker.dart';
 import 'package:monex/widgets/custom_dropdownbutton.dart';
-import 'package:monex/widgets/custom_icon_picker.dart';
 import 'package:monex/widgets/custom_textfield.dart';
 
 class AddGoalsPage extends ConsumerStatefulWidget {
@@ -222,6 +221,7 @@ class _AddGoalsPageState extends ConsumerState<AddGoalsPage> {
               focus: _goalTitleFocusNode,
               isPassword: false,
               hasError: hasError,
+              isOnlyNumber: false,
             ),
             const SizedBox(height: 24),
             AnimatedSize(
@@ -259,12 +259,15 @@ class _AddGoalsPageState extends ConsumerState<AddGoalsPage> {
             _buildSectionTitle("Amount"),
             const SizedBox(height: 12),
             CustomTextfield(
+
               control: _amountController,
               hint: "Enter amount",
               prefix: null,
               focus: _amountFocusNode,
               isPassword: false,
               hasError: hasError,
+              isOnlyNumber: true,
+              
             ),
             const SizedBox(height: 24),
 
@@ -278,6 +281,8 @@ class _AddGoalsPageState extends ConsumerState<AddGoalsPage> {
               focus: _targetAmountFocusNode,
               isPassword: false,
               hasError: hasError,
+              isOnlyNumber: true,
+              
             ),
             const SizedBox(height: 24),
 

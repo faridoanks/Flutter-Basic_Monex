@@ -156,6 +156,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
 
                       if (hasError) const SizedBox(height: 16),
                       CustomTextfield(
+                        isOnlyNumber: false,
                         control: _emailController,
                         hint: "Email",
                         prefix: FontAwesomeIcons.person,

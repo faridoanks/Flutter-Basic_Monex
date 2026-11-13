@@ -114,6 +114,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   prefix: FontAwesomeIcons.user,
                   isPassword: false,
                   hasError: hasError,
+                  isOnlyNumber: false,
                 ),
                 SizedBox(height: 20),
                 CustomTextfield(
@@ -123,6 +124,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   prefix: FontAwesomeIcons.lock,
                   isPassword: true,
                   hasError: hasError,
+                  isOnlyNumber: false,
                 ),
                 SizedBox(height: 24),
                 CustomButton(

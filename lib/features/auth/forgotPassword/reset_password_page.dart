@@ -316,6 +316,7 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage> {
                         focus: _passwordFocusNode,
                         isPassword: true,
                         hasError: _hasError,
+                        isOnlyNumber: false,
                         onChanged: (_) {
                           if (_hasError) {
                             setState(() {
@@ -336,6 +337,7 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage> {
                         focus: _confirmPasswordFocusNode,
                         isPassword: true,
                         hasError: _hasError,
+                        isOnlyNumber: false,
                         onChanged: (_) {
                           if (_hasError) {
                             setState(() {

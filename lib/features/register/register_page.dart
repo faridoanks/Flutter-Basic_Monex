@@ -210,10 +210,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                                 ),
                                 child: Row(
                                   children: [
-                                    Icon(
-                                      Icons.error,
-                                      color: AppColors.error,
-                                    ),
+                                    Icon(Icons.error, color: AppColors.error),
 
                                     const SizedBox(width: 8),
 
@@ -223,7 +220,6 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                                         style: GoogleFonts.inter(
                                           color: AppColors.error,
                                           fontSize: 12,
-                                          
                                         ),
                                       ),
                                     ),
@@ -242,7 +238,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                         focus: _usernameFocusNodeReg,
                         isPassword: false,
                         hasError: hasError,
-                        inputFormatters: [LengthLimitingTextInputFormatter(20)],
+                        isOnlyNumber: false,
                         onChanged: (value) {
                           ref
                               .read(usernameValidationProvider.notifier)
@@ -271,6 +267,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                         focus: _emailFocusNodeReg,
                         isPassword: false,
                         hasError: hasError,
+                        isOnlyNumber: false,
                         onChanged: (value) {
                           ref
                               .read(emailValidationProvider.notifier)
@@ -300,7 +297,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                         focus: _passwordFocusNodeReg,
                         isPassword: true,
                         hasError: hasError,
-                        inputFormatters: [],
+                        isOnlyNumber: false,
                         onChanged: (value) {
                           ref
                               .read(passwordValidationProvider.notifier)

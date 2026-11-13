@@ -478,3 +478,14 @@ class _OverviewCardPageState extends ConsumerState<OverviewCardPage> {
     );
   }
 }
+
+Widget _buildSectionTitle(String title) {
+  return Text(
+    title,
+    style: GoogleFonts.inter(
+      color: AppColors.neutralsGrey2,
+      fontSize: 16,
+      fontWeight: FontWeight.w600,
+    ),
+  );
+}

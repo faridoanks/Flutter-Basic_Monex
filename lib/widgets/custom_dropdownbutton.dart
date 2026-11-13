@@ -38,9 +38,7 @@ class _CustomDropdownbuttonState extends State<CustomDropdownbutton> {
     _overlayEntry?.remove();
     _overlayEntry = null;
 
-    
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      
       if (mounted) {
         setState(() {
           isOpen = false;
@@ -65,19 +63,18 @@ class _CustomDropdownbuttonState extends State<CustomDropdownbutton> {
     return OverlayEntry(
       builder: (context) => Stack(
         children: [
-          GestureDetector(
-            onTap: _closeDropDown,
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
-              child: Container(
-                color: AppColors.neutralsDark1.withOpacity(0.15),
+          Positioned.fill(
+            child: GestureDetector(
+              onTap: _closeDropDown,
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+                child: Container(
+                  color: AppColors.neutralsDark1.withOpacity(0.15),
+                ),
               ),
             ),
           ),
-          CompositedTransformFollower(
-            link: _layerLink,
-            showWhenUnlinked: false,
-            offset: Offset(0, size.height + 4),
+          Center(
             child: Material(
               borderRadius: BorderRadius.circular(8),
               color: AppColors.neutralsWhite,

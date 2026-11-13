@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 
@@ -41,8 +42,8 @@ class SavingModel {
       title: map['title'],
       currentAmount: map['currentAmount'],
       targetAmount: map['targetAmount'],
-      createdAt: map['createdAt'],
-      deadline: map['deadline'],
+      createdAt: (map['createdAt'] as Timestamp).toDate(),
+      deadline: (map['deadline'] as Timestamp).toDate(),
       icon: map['icon'],
       isCompleted: map['isCompleted'],
     );

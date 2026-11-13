@@ -19,14 +19,14 @@ class CustomCalendarPicker extends StatelessWidget {
       context: context,
       barrierDismissible: true, 
       barrierLabel: '',
-      barrierColor: Colors.black.withOpacity(0.15),
+      barrierColor: AppColors.neutralsWhite,
       pageBuilder: (context, anim1, anim2) {
         return BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0), 
           child: Center(
             child: Material(
               borderRadius: BorderRadius.circular(16),
-              color: AppColors.neutralsWhite,
+              color: AppColors.neutralsDark1,
               elevation: 4,
               child: Container(
                 width: MediaQuery.of(context).size.width * 0.85, 
@@ -39,6 +39,7 @@ class CustomCalendarPicker extends StatelessWidget {
                       initialDate: selectedDate ?? DateTime.now(),
                       firstDate: DateTime(2020),
                       lastDate: DateTime(2030),
+                      
                       onDateChanged: (newDate) {
                         onDateSelected(newDate); 
                         Navigator.pop(context); 
@@ -79,7 +80,7 @@ class CustomCalendarPicker extends StatelessWidget {
               dateText,
               style: GoogleFonts.inter(
                 fontSize: 16,
-                color: selectedDate != null ? AppColors.neutralsDark1 : AppColors.neutralsGrey2,
+                color: AppColors.neutralsDark1
               ),
             ),
             Icon(Icons.calendar_today_outlined, color: AppColors.neutralsSoftGrey1, size: 20),

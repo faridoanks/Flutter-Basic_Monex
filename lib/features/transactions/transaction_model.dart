@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class TransactionModel {
   String id;
-  String userId;
   String title;
   String type;
   String category;
@@ -12,7 +11,6 @@ class TransactionModel {
 
   TransactionModel({
     required this.id,
-    required this.userId,
     required this.title,
     required this.type,
     required this.category,
@@ -24,7 +22,6 @@ class TransactionModel {
   Map<String, dynamic> toMap() {
     return {
       'id': id,
-      'userId': userId,
       'title': title,
       'type': type,
       'category': category,
@@ -40,7 +37,6 @@ class TransactionModel {
   ) {
     return TransactionModel(
       id: documentId,
-      userId: map['userId'],
       title: map['title'],
       type: map['type'],
       category: map['category'],

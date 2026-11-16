@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:monex/features/transactions/transaction_model.dart';
 import 'package:monex/features/transactions/transaction_repository.dart';
 import 'package:monex/features/auth/auth_provider.dart';
@@ -61,3 +62,11 @@ final loadTransactionProvider =
     NotifierProvider<TransactionProvider, List<TransactionModel>>(() {
       return TransactionProvider();
     });
+
+final transactionErrorProvider = StateProvider<bool>((ref) {
+  return false;
+});
+
+final transactionErrorMessageProvider = StateProvider<String>((ref) {
+  return '';
+});

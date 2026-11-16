@@ -45,7 +45,7 @@ class SavingRepository {
 
     return result.docs.map((e) {
       return SavingModel.fromMap(
-        result.docs[0].data() as Map<String, dynamic>,
+        e.data() as Map<String, dynamic>,
       );
     }).toList();
   }
